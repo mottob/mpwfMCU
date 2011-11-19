@@ -6,16 +6,10 @@ import java.util.Set;
 import javax.ws.rs.core.Application;
 
 import org.restlet.Component;
-import org.restlet.Restlet;
-import org.restlet.Server;
-import org.restlet.data.ChallengeScheme;
 import org.restlet.data.Protocol;
-import org.restlet.ext.crypto.DigestAuthenticator;
 import org.restlet.ext.jaxrs.InstantiateException;
 import org.restlet.ext.jaxrs.JaxRsApplication;
 import org.restlet.ext.jaxrs.ObjectFactory;
-import org.restlet.routing.Router;
-import org.restlet.security.Authenticator;
 import org.restlet.security.MapVerifier;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
@@ -24,7 +18,6 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.moto.server.restful.authenticate.CookieAuthenticator;
 import com.moto.server.restful.authenticate.DefaultAuthenticator;
 import com.moto.server.restful.resource.AvatarResource;
 import com.moto.server.restful.resource.BaseResource;
@@ -44,42 +37,11 @@ public class SpringJaxRsApplication extends JaxRsApplication implements
 		MapVerifier verifier = new MapVerifier();
         verifier.getLocalSecrets().put("scott", "tiger".toCharArray());
 
-        CookieAuthenticator authenticator = new CookieAuthenticator(
-                getContext(), "Cookie Test");
-        authenticator.setVerifier(verifier);
+        DefaultAuthenticator authenticator = new DefaultAuthenticator(
+                getContext(), "Cookie Test", "Love LBS");
+        authenticator.setWrappedVerifier(verifier);
         authenticator.setNext(this);
         setGuard(authenticator);
-	}
-	public static void main(String[] args) throws Exception {
-		Component component = new Component();
-		component.getServers().add(Protocol.HTTP, 8111);
-		component.getClients().add(Protocol.CLAP);
-		final JaxRsApplication application = new JaxRsApplication(){
-			@Override
-			public Restlet createInboundRoot() {
-		        MapVerifier verifier = new MapVerifier();
-		        verifier.getLocalSecrets().put("scott", "tiger".toCharArray());
-
-		        CookieAuthenticator authenticator = new CookieAuthenticator(
-		                getContext(), "Cookie Test");
-		        authenticator.setVerifier(verifier);
-		        authenticator.setNext(this);
-		        return authenticator;
-			}
-		};
-		application.add(new Application() {
-			
-			@Override
-			public Set<Class<?>> getClasses() {
-				final Set<Class<?>> classes = new HashSet<Class<?>>();
-
-				// NOTE: Here we must list all the provider JAX RS classes
-				classes.add(BaseResource.class);
-				return classes;
-			}
-		});
-		component.getDefaultHost().attach(application);
-		component.start();
 	}
 	
 	public void afterPropertiesSet() throws Exception {
