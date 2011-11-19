@@ -1,0 +1,1 @@
+select u_no,u_name,u_email,u_state,h_id from user where u_no='Tom' and u_pwd='123'

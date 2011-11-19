@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+	"-//Hibernate/Hibernate Mapping DTD//EN"
+	"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd" >
+
+<hibernate-mapping package="com.moto.server.hibernate">
+	<class
+		name="UserBaseInfo"
+		table="userbaseinfo"
+	>
+		<meta attribute="sync-DAO">true</meta>
+		<id
+			name="Id"
+			type="integer"
+			column="u_id"
+		>
+			<generator class="native"/>
+		</id>
+
+		<property
+			name="UName"
+			column="u_name"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UEmail"
+			column="u_email"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UMood"
+			column="u_mood"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UPwd"
+			column="u_pwd"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UState"
+			column="u_state"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UHometown"
+			column="u_hometown"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UJob"
+			column="u_job"
+			type="string"
+			not-null="false"
+			length="255"
+		/>
+		<property
+			name="UMobile"
+			column="u_mobile"
+			type="integer"
+			not-null="false"
+			length="10"
+		/>
+		<property
+			name="UAvatar"
+			column="u_avatar"
+			type="binary"
+			not-null="false"
+		/>
+
+
+	</class>	
+</hibernate-mapping>

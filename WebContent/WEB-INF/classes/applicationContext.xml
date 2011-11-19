@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+            
+	<!-- 定义国际化消息 -->
+	<!--<bean id="messageSource"
+		class="org.springframework.context.support.ResourceBundleMessageSource">
+		<property name="basename">
+			<value>
+				com.demo.spring.resources.ApplicationResources
+			</value>
+		</property>
+	</bean>-->
+
+	<!--  配置数据源 -->
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName">
+			<value>com.mysql.jdbc.Driver</value>
+		</property>
+		<property name="url">
+			<value>jdbc:mysql://localhost:3306/lbs_server</value>
+		</property>
+		<property name="username">
+			<value>lbs_user</value>
+		</property>
+		<property name="password">
+			<value>lbs_user_psd</value>
+		</property>
+	</bean>
+
+	<!-- 配置Hibernate -->
+	<bean id="mySessionFactory" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+	    <property name="mappingResources">
+	        <list>
+	            <value>com/moto/server/hibernate/UserBaseInfo.hbm.xml</value>
+	        </list>
+	    </property>        
+	    <property name="hibernateProperties">
+	        <props>    
+	            <!-- prop key="hibernate.connection.pool_size"></prop -->
+	            <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+	            <prop key="hibernate.show_sql">false</prop>
+	            <prop key="hibernate.use_outer_join">true</prop>
+	            <prop key="hibernate.connection.release_mode">on_close</prop>
+	            <!-- <prop key="hibernate.cglib.use_reflection_optimizer">false</prop> -->
+	        </props>
+	    </property>        
+	   <property name="dataSource">
+	          <ref bean="dataSource"/>
+	   </property>
+	</bean>
+	<!-- 定义DAO -->
+	<bean id="userBaseInfoDAO" class="com.moto.server.hibernate.dao.UserBaseInfoDAO">
+	    <property name="sessionFactory">
+	    	<ref local="mySessionFactory"/>
+	    </property>
+    </bean>
+
+	<!-- 配置事务 -->
+	<!--<bean id="transactionManager"
+		class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+		<property name="sessionFactory">
+			<ref local="sessionFactory" />
+		</property>
+	</bean>
+	-->
+
+	<!-- 定义DAO代理 -->
+	<!--<bean id="UserDAOProxy"
+		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
+		<property name="transactionManager">
+			<ref bean="transactionManager" />
+		</property>
+		<property name="target">
+			<ref local="userDAO" />
+		</property>
+		<property name="transactionAttributes">
+			<props>
+				<prop key="insert*">PROPAGATION_REQUIRED</prop>
+				<prop key="*">PROPAGATION_REQUIRED,readOnly</prop>
+			</props>
+		</property>
+	</bean> -->
+	
+	<!-- 定义DAO -->
+	<bean id="baseDAO" class="com.moto.server.dao.BaseDao" abstract="true">
+		<property name="dataSource">
+			<ref local="dataSource" />
+		</property>
+	</bean>
+	
+	<bean id="userDAO" class="com.moto.server.dao.impl.DefaultUserDao" parent="baseDAO" />
+	<bean id="diaryDAO" class="com.moto.server.dao.impl.DefaultDiaryDao" parent="baseDAO" />
+	<bean id="avatarDAO" class="com.moto.server.dao.impl.DefaultAvatarDao" parent="baseDAO" />
+	
+	<!-- 定义Service-->
+	<bean id="userService" class="com.moto.server.service.impl.DefaultUserService">
+	   <property name="userDAO">
+	    <ref local="userDAO" />
+	   </property>
+	</bean>
+	<bean id="diaryService" class="com.moto.server.service.impl.DefaultDiaryService">
+	   <property name="diaryDAO">
+	    <ref local="diaryDAO" />
+	   </property>
+	</bean>
+	<bean id="avatarService" class="com.moto.server.service.impl.DefaultAvatarService">
+	   <property name="avatarDAO">
+	    <ref local="avatarDAO" />
+	   </property>
+	</bean>
+    
+   <bean id="component" class="org.restlet.Component"/>
+
+	<context:component-scan base-package="com.moto.server.restful">  
+      <context:include-filter expression="org.springframework.stereotype.Service" type="annotation" />  
+    </context:component-scan>
+    
+   <!-- <bean id="helloWorldResource" class="com.moto.test.restlet.resource.HelloWorldResource" scope="request">
+        <constructor-arg ref="helloService"/>
+    </bean>-->
+	
+</beans>

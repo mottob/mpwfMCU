@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="User">
+    <xs:complexType>
+      <xs:attribute name="u_avatar" use="required" type="xs:NCName"/>
+      <xs:attribute name="u_email" use="required"/>
+      <xs:attribute name="u_hometown" use="required" type="xs:NCName"/>
+      <xs:attribute name="u_id" use="required" type="xs:integer"/>
+      <xs:attribute name="u_job" use="required" type="xs:NCName"/>
+      <xs:attribute name="u_mobile" use="required" type="xs:integer"/>
+      <xs:attribute name="u_mood" use="required" type="xs:NCName"/>
+      <xs:attribute name="u_name" use="required" type="xs:NCName"/>
+      <xs:attribute name="u_state" use="required" type="xs:NCName"/>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>
